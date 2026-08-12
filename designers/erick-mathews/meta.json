@@ -3,6 +3,11 @@
   "emoji": "🎨",
   "color": "#3694FC",
   "folders": [
-    { "id": "uncategorized", "name": "Uncategorized", "emoji": "📁", "color": "#3694FC" }
+    {
+      "id": "uncategorized",
+      "name": "Projects",
+      "emoji": "🖥️",
+      "color": "#3694FC"
+    }
   ]
 }
