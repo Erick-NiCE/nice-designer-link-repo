@@ -13,7 +13,28 @@
           "color": "#3694FC"
         }
       ],
-      "links": []
+      "links": [
+        {
+          "id": "neo-dashboards-msqc2c57",
+          "name": "NEO Dashboards",
+          "url": "https://claude.ai/design/p/604f72b2-2d10-43bc-832d-71c2ea2dab01?file=Hero+Dashboards.html&via=share",
+          "description": "Its a small prototype showing the power of claude design with a dashboard!",
+          "created_at": "2026-08-12T16:58:20.525Z",
+          "updated_at": "2026-08-12T16:58:20.525Z",
+          "tags": [
+            "analytics",
+            "dashboard",
+            "prototype"
+          ],
+          "folder": "uncategorized",
+          "preview": {
+            "title": "Just a moment...",
+            "image": "",
+            "favicon": "https://www.google.com/s2/favicons?domain=claude.ai&sz=64",
+            "description": ""
+          }
+        }
+      ]
     }
   ],
   "suggestedTags": [
