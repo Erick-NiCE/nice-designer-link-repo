@@ -1,0 +1,142 @@
+/*!
+ * NiCE Designer — site-wide access gate
+ * -------------------------------------------------------------
+ * One password screen shared by every page (see site-gate.js).
+ * Namespaced with an "sg-" prefix so it never collides with
+ * roadmap.html's own page-level gate, which stacks on top of this
+ * one and uses unprefixed .gate-* classes.
+ */
+
+#nice-site-gate {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font);
+}
+#nice-site-gate.unlocked {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.sg-card {
+  width: 100%;
+  max-width: 420px;
+  margin: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 48px 40px 40px;
+  text-align: center;
+}
+.sg-lock {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--indigo), var(--lyra));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 24px;
+  box-shadow: 0 8px 32px rgba(97, 0, 255, 0.35);
+}
+.sg-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  margin-bottom: 8px;
+}
+.sg-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+.sg-input-wrap { position: relative; margin-bottom: 12px; }
+#nice-site-gate-input {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+  letter-spacing: 2px;
+  text-align: center;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+#nice-site-gate-input:focus { border-color: var(--indigo); }
+#nice-site-gate-input.error { border-color: var(--coral); animation: sg-shake 0.35s ease; }
+@keyframes sg-shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+.sg-error {
+  font-size: 12px;
+  color: var(--coral);
+  margin-bottom: 12px;
+  min-height: 18px;
+  transition: opacity 0.2s;
+}
+#nice-site-gate-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--indigo), var(--lyra));
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  margin-bottom: 28px;
+}
+#nice-site-gate-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+#nice-site-gate-btn:active { transform: translateY(0); }
+.sg-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 24px;
+}
+.sg-cta {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.sg-cta strong { color: var(--text); font-weight: 600; }
+.sg-teams-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  padding: 9px 18px;
+  background: rgba(97, 0, 255, 0.12);
+  border: 1px solid rgba(97, 0, 255, 0.3);
+  border-radius: 100px;
+  text-decoration: none;
+  color: var(--lyra);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.sg-teams-btn:hover {
+  background: rgba(97, 0, 255, 0.22);
+  border-color: rgba(185, 143, 255, 0.5);
+}

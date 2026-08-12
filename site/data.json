@@ -1,0 +1,35 @@
+{
+  "designers": [
+    {
+      "slug": "erick-mathews",
+      "displayName": "Erick Mathews",
+      "emoji": "🎨",
+      "color": "#3694FC",
+      "folders": [
+        {
+          "id": "uncategorized",
+          "name": "Uncategorized",
+          "emoji": "📁",
+          "color": "#3694FC"
+        }
+      ],
+      "links": []
+    }
+  ],
+  "suggestedTags": [
+    "accessibility",
+    "analytics",
+    "checkout",
+    "dashboard",
+    "design-system",
+    "desktop",
+    "figjam",
+    "figma",
+    "handoff",
+    "mobile",
+    "onboarding",
+    "prototype",
+    "web",
+    "wireframe"
+  ]
+}

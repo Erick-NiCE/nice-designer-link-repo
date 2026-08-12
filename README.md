@@ -7,6 +7,8 @@ A shared repo where designers attach links to their design files (Figma, FigJam,
 - Every designer has a folder under [`designers/`](designers/) named after them.
 - Each folder holds a `links.json` — the source of truth for that designer's links.
 - Running `scripts/render_readmes.py` regenerates a human-readable `README.md` per designer and a root [`INDEX.md`](INDEX.md) listing everyone.
+- [`site/`](site/) is a browsable version of the same data — designer folders → sub-folders → link cards with previews, styled to match the NiCE Designer site and gated behind an access code (see `site/site-gate.js`). The "+ Designer / + Folder / + Link" popups write straight back to this repo via [`netlify/functions/`](netlify/functions/) — see [`DEPLOY.md`](DEPLOY.md) for hosting setup.
+- Running `scripts/build_site.py` regenerates [`site/data.json`](site/data.json) from the JSON source files if it ever drifts.
 
 ## Adding a link
 
@@ -29,6 +31,7 @@ A shared repo where designers attach links to their design files (Figma, FigJam,
 
 ```bash
 python3 scripts/render_readmes.py
+python3 scripts/build_site.py
 ```
 
 4. Commit and push.

@@ -32,6 +32,19 @@
     "tags": {
       "type": "array",
       "items": { "type": "string" }
+    },
+    "folder": {
+      "type": "string",
+      "description": "id of a folder listed in this designer's meta.json (defaults to \"uncategorized\")"
+    },
+    "preview": {
+      "type": "object",
+      "description": "Best-effort metadata fetched from the URL when the link was added",
+      "properties": {
+        "title": { "type": "string" },
+        "image": { "type": "string", "format": "uri" },
+        "favicon": { "type": "string", "format": "uri" }
+      }
     }
   }
 }

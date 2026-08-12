@@ -1,0 +1,9 @@
+{
+  "displayName": "Example Designer",
+  "emoji": "🧪",
+  "color": "#00E2A0",
+  "folders": [
+    { "id": "checkout-project", "name": "Checkout Project", "emoji": "🛒", "color": "#6100FF" },
+    { "id": "uncategorized", "name": "Uncategorized", "emoji": "📁", "color": "#3694FC" }
+  ]
+}

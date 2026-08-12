@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NDLR - NiCE Designer Link Repo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="theme.css" />
+  <link rel="stylesheet" href="site-gate.css" />
+  <link rel="stylesheet" href="app.css" />
+  <script src="site-gate.js" defer></script>
+</head>
+<body>
+
+  <!-- SITE-WIDE ACCESS GATE -->
+  <div id="nice-site-gate">
+    <div class="sg-card">
+      <div class="sg-lock">🔒</div>
+      <div class="sg-title">NDLR Access</div>
+      <div class="sg-subtitle">This is the login for the NiCE Designer Link Repo. Enter the access code to continue.</div>
+      <div class="sg-input-wrap">
+        <input id="nice-site-gate-input" type="password" placeholder="Enter code" autocomplete="off" />
+      </div>
+      <div class="sg-error" id="nice-site-gate-error"></div>
+      <button id="nice-site-gate-btn" type="button">Unlock</button>
+      <div class="sg-divider"></div>
+      <div class="sg-cta">
+        Don't have the code?<br>
+        <strong>Reach out to Erick Mathews on Teams</strong> to request access.
+        <br>
+        <a class="sg-teams-btn" href="https://teams.microsoft.com/l/chat/0/0?users=erick.mathews@nice.com" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H8a2 2 0 00-2 2v2H4a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-2h2a2 2 0 002-2V4a2 2 0 00-2-2zM4 20V8h12v12H4zm16-4h-2V8a2 2 0 00-2-2H8V4h12v12z" fill="currentColor"/></svg>
+          Message on Teams
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="site-nav" id="site-nav">
+    <a href="#/" class="nav-logo">
+      <span class="logo-nice">NiCE</span><span class="logo-designer"> Designer Link Repo</span>
+    </a>
+    <a href="https://github.com/Erick-NiCE/NiCE-Designer-Link-Repo" class="nav-download" target="_blank" rel="noopener">GitHub</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-radial"></div>
+    <div class="hero-content">
+      <h1 class="hero-title"><span class="hero-title-nice" id="hero-title">NDLR</span></h1>
+      <p class="hero-subtitle" id="hero-subtitle">
+        A shared directory where designers organize links to their Figma, FigJam, and prototype files into their own folders.
+      </p>
+    </div>
+  </div>
+
+  <!-- TOOLBAR (breadcrumb + add button) -->
+  <div class="toolbar">
+    <div class="breadcrumb" id="breadcrumb"></div>
+    <button class="btn-add" id="add-btn">+ Add</button>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls-section">
+    <div class="controls-bar">
+      <input id="search" class="search-input" type="search" placeholder="Search..." />
+    </div>
+    <div class="tag-bar" id="tag-bar"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-section" id="root"></div>
+
+  <!-- MODAL MOUNT -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-card" id="modal-card"></div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
