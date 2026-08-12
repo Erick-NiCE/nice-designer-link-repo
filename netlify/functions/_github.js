@@ -85,4 +85,14 @@ function isSafePublicUrl(rawUrl) {
   }
 }
 
-module.exports = { getFile, putFile, isValidSlug, slugify, jsonResponse, isSafePublicUrl };
+async function deleteFile(path, message, sha) {
+  const res = await fetch(`${API}/repos/${repo()}/contents/${path}`, {
+    method: "DELETE",
+    headers: { ...authHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify({ message, sha, branch: branch() }),
+  });
+  if (!res.ok) throw new Error(`GitHub DELETE ${path} failed: ${res.status} ${await res.text()}`);
+  return res.json();
+}
+
+module.exports = { getFile, putFile, deleteFile, isValidSlug, slugify, jsonResponse, isSafePublicUrl };

@@ -141,6 +141,7 @@ function renderHome() {
     tile.className = "folder-tile";
     tile.href = `#/${d.slug}`;
     tile.innerHTML = `
+      <button class="tile-edit-btn" type="button" data-edit-designer="${d.slug}" title="Edit">✏️</button>
       <div class="folder-cover" style="background: linear-gradient(135deg, ${d.color}, ${shade(d.color)});">
         <span>${d.emoji || "🎨"}</span>
       </div>
@@ -150,6 +151,11 @@ function renderHome() {
       </div>
     `;
     attachTilt(tile);
+    tile.querySelector("[data-edit-designer]").addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openEditDesignerModal(d);
+    });
     grid.appendChild(tile);
   });
 }
@@ -188,6 +194,7 @@ function renderDesigner(designer) {
     tile.className = "folder-tile";
     tile.href = `#/${designer.slug}/${f.id}`;
     tile.innerHTML = `
+      <button class="tile-edit-btn" type="button" data-edit-folder="${f.id}" title="Edit">✏️</button>
       <div class="folder-cover" style="background: linear-gradient(135deg, ${f.color}, ${shade(f.color)});">
         <span>${f.emoji || "📁"}</span>
       </div>
@@ -197,6 +204,11 @@ function renderDesigner(designer) {
       </div>
     `;
     attachTilt(tile);
+    tile.querySelector("[data-edit-folder]").addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openEditFolderModal(designer, f);
+    });
     grid.appendChild(tile);
   });
 }
@@ -242,6 +254,7 @@ function renderFolder(designer, folder) {
     const updated = link.updated_at && link.updated_at !== link.created_at ? ` · Updated ${fmtDate(link.updated_at)}` : "";
 
     card.innerHTML = `
+      <button class="tile-edit-btn" type="button" data-edit-link="${link.id}" title="Edit">✏️</button>
       <div class="link-preview-img">
         ${preview.image
           ? `<img src="${escapeHtml(preview.image)}" alt="" loading="lazy" onerror="this.parentElement.innerHTML='<img class=\\'fallback-favicon\\' src=${JSON.stringify(preview.favicon || "")} alt=\\'\\'>'">`
@@ -260,6 +273,11 @@ function renderFolder(designer, folder) {
       </div>
     `;
     attachTilt(card);
+    card.querySelector("[data-edit-link]").addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openEditLinkModal(designer, folder, link);
+    });
     grid.appendChild(card);
   });
 
@@ -616,6 +634,234 @@ function openAddLinkModal(designer, folder) {
       });
     }
   );
+}
+
+/* ---- Edit Designer ---- */
+function openEditDesignerModal(designer) {
+  openModal(
+    `
+    <div class="modal-title">✏️ Edit ${escapeHtml(designer.displayName)}</div>
+    <div class="field">
+      <label>Name</label>
+      <input type="text" id="m-name" value="${escapeHtml(designer.displayName)}" />
+    </div>
+    <div class="field">
+      <label>Emoji</label>
+      <div class="emoji-grid" id="m-emoji">${pickerHtml("m-emoji", EMOJI_CHOICES, "emoji")}</div>
+    </div>
+    <div class="field">
+      <label>Color</label>
+      <div class="color-grid" id="m-color">${pickerHtml("m-color", ACCENTS, "color")}</div>
+    </div>
+    <div class="form-error" id="m-error"></div>
+    <div class="modal-actions with-delete">
+      <button class="btn-danger" id="m-delete" type="button">Delete designer</button>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-secondary" id="m-cancel" type="button">Cancel</button>
+        <button class="btn-primary-modal" id="m-submit" type="button">Save</button>
+      </div>
+    </div>
+  `,
+    (card) => {
+      let emoji = designer.emoji;
+      let color = designer.color;
+      markActive(card, ".emoji-pick", emoji);
+      markActive(card, ".color-pick", color);
+      wirePicker(card, ".emoji-pick", (v) => (emoji = v));
+      wirePicker(card, ".color-pick", (v) => (color = v));
+      card.querySelector("#m-cancel").addEventListener("click", closeModal);
+      card.querySelector("#m-delete").addEventListener("click", async () => {
+        if (!confirm(`Delete "${designer.displayName}" and all their folders/links? This can't be undone.`)) return;
+        try {
+          await api("delete-designer", { slug: designer.slug });
+          state.data.designers = state.data.designers.filter((d) => d.slug !== designer.slug);
+          closeModal();
+          toast(`Deleted ${designer.displayName}`);
+          navigate("#/");
+        } catch (err) {
+          card.querySelector("#m-error").textContent = err.message;
+        }
+      });
+      card.querySelector("#m-submit").addEventListener("click", async () => {
+        const name = card.querySelector("#m-name").value.trim();
+        const errEl = card.querySelector("#m-error");
+        if (!name) return (errEl.textContent = "Name is required.");
+        const btn = card.querySelector("#m-submit");
+        btn.disabled = true;
+        btn.textContent = "Saving...";
+        try {
+          const result = await api("update-designer", { slug: designer.slug, patch: { displayName: name, emoji, color } });
+          designer.displayName = result.displayName;
+          designer.emoji = result.emoji;
+          designer.color = result.color;
+          closeModal();
+          toast("Saved");
+          render();
+        } catch (err) {
+          errEl.textContent = err.message;
+          btn.disabled = false;
+          btn.textContent = "Save";
+        }
+      });
+    }
+  );
+}
+
+/* ---- Edit Folder ---- */
+function openEditFolderModal(designer, folder) {
+  const canDelete = folder.id !== "uncategorized";
+  openModal(
+    `
+    <div class="modal-title">✏️ Edit ${escapeHtml(folder.name)}</div>
+    <div class="field">
+      <label>Name</label>
+      <input type="text" id="m-name" value="${escapeHtml(folder.name)}" />
+    </div>
+    <div class="field">
+      <label>Emoji</label>
+      <div class="emoji-grid" id="m-emoji">${pickerHtml("m-emoji", EMOJI_CHOICES, "emoji")}</div>
+    </div>
+    <div class="field">
+      <label>Color</label>
+      <div class="color-grid" id="m-color">${pickerHtml("m-color", ACCENTS, "color")}</div>
+    </div>
+    <div class="form-error" id="m-error"></div>
+    <div class="modal-actions with-delete">
+      ${canDelete ? `<button class="btn-danger" id="m-delete" type="button">Delete folder</button>` : `<span></span>`}
+      <div style="display:flex; gap:10px;">
+        <button class="btn-secondary" id="m-cancel" type="button">Cancel</button>
+        <button class="btn-primary-modal" id="m-submit" type="button">Save</button>
+      </div>
+    </div>
+  `,
+    (card) => {
+      let emoji = folder.emoji;
+      let color = folder.color;
+      markActive(card, ".emoji-pick", emoji);
+      markActive(card, ".color-pick", color);
+      wirePicker(card, ".emoji-pick", (v) => (emoji = v));
+      wirePicker(card, ".color-pick", (v) => (color = v));
+      card.querySelector("#m-cancel").addEventListener("click", closeModal);
+      const delBtn = card.querySelector("#m-delete");
+      if (delBtn) {
+        delBtn.addEventListener("click", async () => {
+          if (!confirm(`Delete "${folder.name}"? Its links will move to Uncategorized.`)) return;
+          try {
+            const result = await api("delete-folder", { designerSlug: designer.slug, folderId: folder.id });
+            designer.folders = result.folders;
+            designer.links.forEach((l) => {
+              if (l.folder === folder.id) l.folder = "uncategorized";
+            });
+            closeModal();
+            toast(`Deleted "${folder.name}"`);
+            navigate(`#/${designer.slug}`);
+          } catch (err) {
+            card.querySelector("#m-error").textContent = err.message;
+          }
+        });
+      }
+      card.querySelector("#m-submit").addEventListener("click", async () => {
+        const name = card.querySelector("#m-name").value.trim();
+        const errEl = card.querySelector("#m-error");
+        if (!name) return (errEl.textContent = "Name is required.");
+        const btn = card.querySelector("#m-submit");
+        btn.disabled = true;
+        btn.textContent = "Saving...";
+        try {
+          const result = await api("update-folder", { designerSlug: designer.slug, folderId: folder.id, patch: { name, emoji, color } });
+          Object.assign(folder, result.folder);
+          closeModal();
+          toast("Saved");
+          render();
+        } catch (err) {
+          errEl.textContent = err.message;
+          btn.disabled = false;
+          btn.textContent = "Save";
+        }
+      });
+    }
+  );
+}
+
+/* ---- Edit Link ---- */
+function openEditLinkModal(designer, folder, link) {
+  openModal(
+    `
+    <div class="modal-title">✏️ Edit link</div>
+    <div class="field">
+      <label>URL</label>
+      <input type="url" id="m-url" value="${escapeHtml(link.url)}" />
+    </div>
+    <div class="field">
+      <label>Name</label>
+      <input type="text" id="m-name" value="${escapeHtml(link.name)}" />
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <textarea id="m-desc" rows="2">${escapeHtml(link.description || "")}</textarea>
+    </div>
+    <div class="field">
+      <label>Tags</label>
+      <div class="tag-input-wrap" id="m-tag-wrap"><input type="text" placeholder="Type and press Enter..." /></div>
+      <div class="tag-suggestions" id="m-tag-suggestions"></div>
+    </div>
+    <div class="form-error" id="m-error"></div>
+    <div class="modal-actions with-delete">
+      <button class="btn-danger" id="m-delete" type="button">Delete link</button>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-secondary" id="m-cancel" type="button">Cancel</button>
+        <button class="btn-primary-modal" id="m-submit" type="button">Save</button>
+      </div>
+    </div>
+  `,
+    (card) => {
+      const getTags = wireTagInput(card, "#m-tag-wrap", link.tags || [], state.data.suggestedTags || []);
+      card.querySelector("#m-cancel").addEventListener("click", closeModal);
+      card.querySelector("#m-delete").addEventListener("click", async () => {
+        if (!confirm(`Delete "${link.name}"?`)) return;
+        try {
+          await api("delete-link", { designerSlug: designer.slug, linkId: link.id });
+          designer.links = designer.links.filter((l) => l.id !== link.id);
+          closeModal();
+          toast(`Deleted "${link.name}"`);
+          render();
+        } catch (err) {
+          card.querySelector("#m-error").textContent = err.message;
+        }
+      });
+      card.querySelector("#m-submit").addEventListener("click", async () => {
+        const url = card.querySelector("#m-url").value.trim();
+        const name = card.querySelector("#m-name").value.trim();
+        const errEl = card.querySelector("#m-error");
+        if (!url) return (errEl.textContent = "URL is required.");
+        if (!name) return (errEl.textContent = "Name is required.");
+        const btn = card.querySelector("#m-submit");
+        btn.disabled = true;
+        btn.textContent = "Saving...";
+        try {
+          const result = await api("update-link", {
+            designerSlug: designer.slug,
+            linkId: link.id,
+            patch: { url, name, description: card.querySelector("#m-desc").value.trim(), tags: getTags() },
+          });
+          Object.assign(link, result.link);
+          closeModal();
+          toast("Saved");
+          render();
+        } catch (err) {
+          errEl.textContent = err.message;
+          btn.disabled = false;
+          btn.textContent = "Save";
+        }
+      });
+    }
+  );
+}
+
+function markActive(card, selector, value) {
+  card.querySelectorAll(selector).forEach((el) => {
+    if (el.dataset.value === value) el.classList.add("active");
+  });
 }
 
 addBtn.addEventListener("click", () => {
